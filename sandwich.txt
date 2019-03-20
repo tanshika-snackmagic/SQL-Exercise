@@ -1,0 +1,75 @@
+sql> select * from Tastes;
++-------+---------+
+| Name  | Filling |
++-------+---------+
+| Brown | Turkey  |
+| Brown | Beef    |
+| Brown | Ham     |
+| Jones | Cheese  |
+| Green | Beef    |
+| Green | Turkey  |
+| Green | Cheese  |
++-------+---------+
+
+sql> select * from Locations;
++---------+---------+---------------+
+| Lname   | Phone   | Address       |
++---------+---------+---------------+
+| Buttery | 7023421 | College St    |
+| Linclon | 6834523 | Linclon Place |
+| Old Nag | 7678132 | Dame St       |
+| ONeil   | 6742134 | Pearse St     |
++---------+---------+---------------+
+
+sql> select * from Sandwich;
++----------+-------+---------+-------+
+| Location | Bread | filling | Price |
++----------+-------+---------+-------+
+| Linclon  | Rye   | Ham     |  1.25 |
+| ONeil    | White | Cheese  |   1.2 |
+| ONeil    | Whole | Ham     |  1.25 |
+| Old Nag  | Rye   | Beef    |  1.35 |
+| Buttery  | White | Cheese  |     1 |
+| ONeil    | White | Turkey  |  1.35 |
+| Buttery  | White | Ham     |   1.1 |
+| Linclon  | Rye   | Beef    |  1.35 |
+| Linclon  | White | Ham     |   1.3 |
+| Old Nag  | Rye   | Ham     |   1.4 |
++----------+-------+---------+-------+
+
+Questions:
+Write SQL statements to retrieve the following information:
+(i) places where Jones can eat (using a nested subquery).
+mysql> select distinct location from Sandwich where location in ( select location from Sandwich, Tastes where Sandwich.filling=Tastes.filling and Name='Jones');
++----------+
+| location |
++----------+
+| Buttery  |
+| ONeil    |
++----------+
+2 rows in set (0.00 sec)
+
+(ii) places where Jones can eat (without using a nested subquery).
+mysql> select location from Sandwich s, Tastes t where s.filling=t.filling and t.name='Jones';
++----------+
+| location |
++----------+
+| ONeil    |
+| Buttery  |
++----------+
+2 rows in set (0.00 sec)
+
+(iii) for each location the number of people who can eat there. 
+mysql> select location , count(distinct name) as Total_no_of_People
+    -> from Sandwich join Tastes
+    -> where Sandwich.filling=Tastes.filling
+    -> group by location;
++----------+--------------------+
+| location | Total_no_of_People |
++----------+--------------------+
+| Buttery  |                  3 |
+| Linclon  |                  2 |
+| Old Nag  |                  2 |
+| ONeil    |                  3 |
++----------+--------------------+
+4 rows in set (0.00 sec)
